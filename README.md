@@ -17,7 +17,9 @@
 
    - ChromeDriver下载地址：
 
-     http://chromedriver.chromium.org/downloads![image-20190726094947407](README.assets/image-20190726094947407.png)
+     http://chromedriver.chromium.org/downloads
+
+     ![image-20190726094947407](README.assets/image-20190726094947407.png)
 
    - 下载完成后将chromedriver.exe（windows）或chromedriver（mac）放入resources路径下（如图示），项目默认提供：mac 75版本和windows 74版本的chromedriver。![image-20190726100827672](README.assets/image-20190726100827672.png)
 
