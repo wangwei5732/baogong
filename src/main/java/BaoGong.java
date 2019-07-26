@@ -9,10 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @Auther: wangwei
@@ -34,7 +31,7 @@ public class BaoGong {
         RoleEnum role=RoleEnum.GCS;
 
         //配置webdriver
-        System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver");
+        System.setProperty("webdriver.chrome.driver", BaoGong.getChromeDriverUrl());
         WebDriver webDriver = new ChromeDriver();
         Scanner scanner  = new Scanner(System.in);
         try {
@@ -194,5 +191,24 @@ public class BaoGong {
             e.printStackTrace();
         }
         return validateStr;
+    }
+
+    /**
+     * 根据系统类型获取chromedriver
+     * @return chromedriver Url
+     */
+    private static String getChromeDriverUrl(){
+        Properties prop = System.getProperties();
+        String osName = prop.getProperty("os.name");
+        if (osName.startsWith("Mac OS")) {
+            // 苹果
+            return "src/main/resources/chromedriver";
+        } else if (osName.startsWith("Windows")) {
+            // windows
+            return "src/main/resources/chromedriver.exe";
+        } else {
+            // unix or linux
+            return "src/main/resources/chromedriver";
+        }
     }
 }
