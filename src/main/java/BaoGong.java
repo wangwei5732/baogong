@@ -17,10 +17,14 @@ import java.util.*;
  * @Description:报工模拟填报
  */
 public class BaoGong {
+    //  登录页
+    private static String logonAction="http://sapmb01.hollysys.net:5280/OnDemand/logonAction.action";
     //  报工页面
-    private static String qeruyworkTimeReportAction="http://sapmb01.hollysys.net:5280/OnDemand/wrkmng/bcmng/qeruyworkTimeReportAction.action";
     //  新建补录页面
+    private static String qeruyworkTimeReportAction="http://sapmb01.hollysys.net:5280/OnDemand/wrkmng/bcmng/qeruyworkTimeReportAction.action";
     private static String createReportActionReportAction="http://sapmb01.hollysys.net:5280/OnDemand/wrkmng/bcmng/createReportAction.action?jobworkid=";
+    // 报工填写页面
+    private static String updWorkReportAction="http://sapmb01.hollysys.net:5280/OnDemand/wrkmng/bcmng/updWorkReportAction.action?ser=";
 
     public static void main(String[] args) {
         //    账号
@@ -37,7 +41,7 @@ public class BaoGong {
         try {
 
             //1.进入网站并模拟登陆
-            webDriver.get("http://sapmb01.hollysys.net:5280/OnDemand/logonAction.action");
+            webDriver.get(logonAction);
             Alert alert = webDriver.switchTo().alert();
             //接受alert弹窗
             alert.accept();
