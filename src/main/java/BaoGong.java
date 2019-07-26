@@ -37,6 +37,7 @@ public class BaoGong {
         //配置webdriver
         System.setProperty("webdriver.chrome.driver", BaoGong.getChromeDriverUrl());
         WebDriver webDriver = new ChromeDriver();
+        webDriver.manage().window().setSize(new Dimension(1024,768));
         Scanner scanner  = new Scanner(System.in);
         try {
 
@@ -45,37 +46,9 @@ public class BaoGong {
             Alert alert = webDriver.switchTo().alert();
             //接受alert弹窗
             alert.accept();
+            // 获取验证码
+            String validateStr = BaoGong.getValidateCode(webDriver);
 
-            //获取验证码element
-            WebElement validateCode = ((ChromeDriver) webDriver).findElement(By.xpath("//*[@id=\"mainFrame\"]/table[1]/tbody/tr[2]/td[2]/table/tbody/tr[5]/td[2]/span/img"));
-            //截取整个网站图片
-            File screenshot = ((TakesScreenshot)webDriver).getScreenshotAs(OutputType.FILE);
-            BufferedImage fullImage = ImageIO.read(screenshot);
-
-            // 获取网站页面尺寸，并计算尺寸比例（网站/图片）
-            Dimension dimension = webDriver.manage().window().getSize();
-            double scaleW = (double) dimension.getWidth()/fullImage.getWidth();
-            double scaleH = (double) dimension.getHeight()/fullImage.getHeight();
-
-            Point point = validateCode.getLocation();
-            int width = (int)(validateCode.getSize().getWidth()/scaleW) ;
-            int height = (int) (validateCode.getSize().getHeight()/scaleH);
-            int imgX =(int)(point.getX()/scaleW);
-            int imgY =(int)(point.getY()/scaleH);
-
-            //mark：不知道为什么高度有误差，直接多取了300，后期修改
-            BufferedImage validateImg = fullImage.getSubimage(imgX,imgY,width,height+200);
-
-            File file = new File("validateImg","validateImg.png");
-            if (!file.exists()){
-                file.getParentFile().mkdir();
-            }
-            ImageIO.write(validateImg,"png",file);
-            //获取验证码，添加容错，调用两次
-            String validateStr = BaoGong.getValidateStr();
-            if(StringUtils.isEmpty(validateStr)||validateStr.length()!=4){
-                validateStr = BaoGong.getValidateStr();
-            }
             while (StringUtils.isEmpty(userName)||StringUtils.isEmpty(password)){
                 //用户名密码输入
                 if (StringUtils.isEmpty(userName)){
@@ -214,5 +187,53 @@ public class BaoGong {
             // unix or linux
             return "src/main/resources/chromedriver";
         }
+    }
+
+    /**
+     * 截取验证码，使用百度地图api进行识别，返回验证码
+     * @param webDriver
+     * @return 验证码
+     * @throws Exception
+     */
+    private  static String getValidateCode(WebDriver webDriver) throws Exception{
+        //获取验证码element
+        WebElement validateCode = ((ChromeDriver) webDriver).findElement(By.xpath("//*[@id=\"mainFrame\"]/table[1]/tbody/tr[2]/td[2]/table/tbody/tr[5]/td[2]/span/img"));
+        //截取整个网站图片
+        File screenshot = ((TakesScreenshot)webDriver).getScreenshotAs(OutputType.FILE);
+        BufferedImage fullImage = ImageIO.read(screenshot);
+        Point point = validateCode.getLocation();
+
+        int width = validateCode.getSize().getWidth();
+        int height = validateCode.getSize().getHeight();
+        int imgX =point.getX();
+        int imgY =point.getY();
+
+        // mark
+        Properties prop = System.getProperties();
+        String osName = prop.getProperty("os.name");
+        if (osName.startsWith("Mac OS")) {
+            // Mac
+            // 获取网站页面尺寸，并计算尺寸比例（网站/图片）
+            Dimension dimension = webDriver.manage().window().getSize();
+            double scaleW = (double) dimension.getWidth()/fullImage.getWidth();
+            double scaleH = scaleW;
+            width = (int)(validateCode.getSize().getWidth()/scaleW) ;
+            height = (int) (validateCode.getSize().getHeight()/scaleH);
+            imgX =(int)(point.getX()/scaleW);
+            imgY =(int)(point.getY()/scaleH);
+        }
+        BufferedImage validateImg = fullImage.getSubimage(imgX,imgY,width,height);
+
+        File file = new File("validateImg","validateImg.png");
+        if (!file.exists()){
+            file.getParentFile().mkdir();
+        }
+        ImageIO.write(validateImg,"png",file);
+        //获取验证码，添加容错，调用两次
+        String validateStr = BaoGong.getValidateStr();
+        if(StringUtils.isEmpty(validateStr)||validateStr.length()!=4){
+            validateStr = BaoGong.getValidateStr();
+        }
+        return validateStr;
     }
 }
