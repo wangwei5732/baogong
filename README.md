@@ -17,7 +17,7 @@
 
    - ChromeDriver下载地址：
 
-     http://chromedriver.chromium.org/downloads
+     http://chromedriver.storage.googleapis.com/index.html
 
      ![image-20190726094947407](README.assets/image-20190726094947407.png)
 
